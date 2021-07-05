@@ -6,7 +6,6 @@ library(magrittr)
 library(PeacoQC)
 
 matrix2flowFrame <- function(a_matrix){ 
-  
   minRange <- matrixStats::colMins(a_matrix)
   maxRange <- matrixStats::colMaxs(a_matrix)
   rnge <- maxRange - minRange
@@ -32,11 +31,9 @@ matrix2flowFrame <- function(a_matrix){
   return(flowFrame)
 }
 
-    
-    
-#peacoqc_flowQC <- function(flowframe, input.pars){
-  PeacoQC(data,
-        channels = seq(length(colnames(data))-1),
+peacoqc_flowQC <- function(flowframe, input.pars){
+  QC <- try(PeacoQC(flowframe,
+        channels = seq(length(colnames(flowframe))-1),
         determine_good_cells  = "all",
         plot = FALSE,
         save_fcs = FALSE,
@@ -52,7 +49,9 @@ matrix2flowFrame <- function(a_matrix){
         consecutive_bins = 5,
         remove_zeros = input.pars$remove_zeros,
         #suffix_fcs = "_QC",
-        force_IT = 150)
+        force_IT = 150), silent = TRUE)
+  return(QC$GoodCells)
+}
 
 ctx <- tercenCtx(workflowId = "6de71104ef4450d21f34d141e807abee",
                  stepId = "53ed62c5-28d5-44d2-a167-165f5417fe27")
@@ -68,7 +67,7 @@ data <- ctx$as.matrix() %>% t() %>% cbind((ctx$cselect(ctx$cnames[[1]]))) %>%
   as.matrix() %>% matrix2flowFrame()
 
 qc_df <- data.frame(matrix(ncol=0, nrow=nrow(data)))
-qc_df$QC_flag <- ifelse(peacoqc_result$GoodCells == TRUE, "pass", "fail")
+qc_df$QC_flag <- ifelse(peacoqc_flowQC(data, input.pars) == TRUE, "pass", "fail")
 peacoqc_QC <- cbind(qc_df, .ci = (0:(nrow(qc_df)-1)))
 ctx$addNamespace(peacoqc_QC) %>% ctx$save()
 

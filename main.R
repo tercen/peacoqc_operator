@@ -6,7 +6,6 @@ library(magrittr)
 library(PeacoQC)
 
 matrix2flowFrame <- function(a_matrix){ 
-  
   minRange <- matrixStats::colMins(a_matrix)
   maxRange <- matrixStats::colMaxs(a_matrix)
   rnge <- maxRange - minRange
@@ -32,6 +31,28 @@ matrix2flowFrame <- function(a_matrix){
   return(flowFrame)
 }
 
+peacoqc_flowQC <- function(flowframe, input.pars){
+  QC <- try(PeacoQC(flowframe,
+                    channels = seq(length(colnames(flowframe))-1),
+                    determine_good_cells  = "all",
+                    plot = FALSE,
+                    save_fcs = FALSE,
+                    output_directory = NULL,
+                    #name_directory = ,
+                    report = FALSE,
+                    #events_per_bin = FindEventsPerBin(remove_zeros, ff, channels,min_cells, max_bins, step),
+                    min_cells = 150,
+                    max_bins = 500,
+                    step = 500,
+                    MAD = input.pars$MAD,
+                    IT_limit = input.pars$IT_limit,
+                    consecutive_bins = 5,
+                    remove_zeros = input.pars$remove_zeros,
+                    #suffix_fcs = "_QC",
+                    force_IT = 150), silent = TRUE)
+  return(QC$GoodCells)
+}
+
 ctx <- tercenCtx()
 
 input.pars <- list(
@@ -40,32 +61,11 @@ input.pars <- list(
   remove_zeros = ifelse((ctx$op.value('remove_zeros') == "false"), FALSE, TRUE)
 )
 
-
 data <- ctx$as.matrix() %>% t() %>% cbind((ctx$cselect(ctx$cnames[[1]]))) %>% 
   as.matrix() %>% matrix2flowFrame()
 
-#peacoqc_flowQC <- function(flowframe, input.pars){
-PeacoQC(data,
-        channels = seq(length(colnames(data))-1),
-        determine_good_cells  = "all",
-        plot = FALSE,
-        save_fcs = FALSE,
-        output_directory = NULL,
-        #name_directory = ,
-        report = FALSE,
-        #events_per_bin = FindEventsPerBin(remove_zeros, ff, channels,min_cells, max_bins, step),
-        min_cells = 150,
-        max_bins = 500,
-        step = 500,
-        MAD = input.pars$MAD,
-        IT_limit = input.pars$IT_limit,
-        consecutive_bins = 5,
-        remove_zeros = input.pars$remove_zeros,
-        #suffix_fcs = "_QC",
-        force_IT = 150)
-
 qc_df <- data.frame(matrix(ncol=0, nrow=nrow(data)))
-qc_df$QC_flag <- ifelse(peacoqc_result$GoodCells == TRUE, "pass", "fail")
+qc_df$QC_flag <- ifelse(peacoqc_flowQC(data, input.pars) == TRUE, "pass", "fail")
 peacoqc_QC <- cbind(qc_df, .ci = (0:(nrow(qc_df)-1)))
 ctx$addNamespace(peacoqc_QC) %>% ctx$save()
 
