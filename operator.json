@@ -20,7 +20,7 @@
    {
     "kind": "BooleanProperty",
     "name": "remove_zeros",
-    "defaultValue": "false",
+    "defaultValue": false,
     "description": "Default is FALSE. If TRUE, the zero values will be removed before the peak detection step. They will not be indicated as ’bad’ value. Recommended when cleaning mass cytometry data"
    }
   ]
