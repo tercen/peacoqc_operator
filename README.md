@@ -1,50 +1,40 @@
-# Template R operator
+# PeacoQC flow cytometry QC operator
 
-The `Template R operator` is a template repository for the creation of R operators in Tercen. An overview of steps for developing an operator are:
+#### Description
 
-1. create a github repo
-2. install tercen_studio
-3. login to tercen_studio
-4. git clone the newly created repo
-5. start developing in R in tercen_studio
-6. add R packages to the repo
-7. push to the github repo
-8. go to tercen and install the operator
-
-More information can be found in [Tercen app builder's guide](https://tercen.github.io/appbuilders-guide/).
-
-Below is the operator README standard structure:
-
-##### Description
-
-The `Template R operator` is a template repository for the creation of R operators in Tercen.
+`peacoqc` operator performs quality control on flow cytometry data.
 
 ##### Usage
 
 Input projection|.
 ---|---
-`x-axis`        | type, description 
-`y-axis`        | type, description 
-`row`           | type, description 
-`column`        | type, description 
-`colors`        | type, description 
-`labels`        | type, description 
+`row`   | represents the variables (e.g. channels, markers)
+`col`   | represents the observations (Use 'Time' on top of rowid.) 
+`y-axis`| measurement value
 
-Input parameters|.
----|---
-`input_var`        | parameter description
 
 Output relations|.
 ---|---
-`output_var`        | output relation
-`Operator view`        | view of the Shiny application
+`QC_flag`       | character, quality flag `pass` or `fail`
+
+Input parameters|.
+---|---
+`MAD`         | The MAD parameter. Default is 6. If this is increased, the algorithm becomes less strict
+`IT_limit`         | The IsolationTree parameter. Default is 0.55. If this is increased, the algorithm becomes less strict
+`remove_zeros`     | Default is FALSE. If TRUE, the zero values will be removed before the peak detection step. They will not be indicated as ’bad’ value. Recommended when cleaning mass cytometry data
 
 ##### Details
+The peacoQC operator will determine peaks on the channels in the flow cytometry data. 
+Then it will flagg anomalies caused by e.g. clogs, changes in speed etc. by using an IsolationTree and the MAD method (median absolute deviation). The parameters can be changed to make the quality checks more or less strict.
+The operator returns a quality flagg `pass` or `fail`. 
 
-Details on the computation.
+
+#### Reference
+
+[PeacoQC R package]((http://www.bioconductor.org/packages/release/bioc/html/PeacoQC.html))
 
 ##### See Also
 
-[template_shiny_operator](https://github.com/tercen/template_shiny_operator)
-, [template_docker_operator](https://github.com/tercen/template_docker_operator)
-
+[flowAI operator]((https://github.com/tercen/flowai_operator))
+[flowClean operator]((https://github.com/tercen/flowclean_operator))
+[flowCut operator]((https://github.com/tercen/flowcut_operator))
