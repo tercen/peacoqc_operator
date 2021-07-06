@@ -1,5 +1,5 @@
 library(tercen)
-library(dplyr)
+library(dplyr, warn.conflicts = FALSE)
 library(tibble)
 library(flowCore)
 library(magrittr)
