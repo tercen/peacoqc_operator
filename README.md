@@ -35,6 +35,6 @@ The operator returns a quality flagg `pass` or `fail`.
 
 ##### See Also
 
-[flowAI operator]((https://github.com/tercen/flowai_operator))
-[flowClean operator]((https://github.com/tercen/flowclean_operator))
-[flowCut operator]((https://github.com/tercen/flowcut_operator))
+[flowAI operator](https://github.com/tercen/flowai_operator)
+[flowClean operator](https://github.com/tercen/flowclean_operator)
+[flowCut operator](https://github.com/tercen/flowcut_operator)
