@@ -1,5 +1,9 @@
 library(tercen)
+<<<<<<< HEAD
 library(dplyr, warn.conflicts = FALSE)
+=======
+library(dplyr, quietly = TRUE)
+>>>>>>> 9ca42ac5fe42ce8c5ac98dd856135bfeb5fafe3e
 library(tibble)
 library(flowCore)
 library(magrittr)
