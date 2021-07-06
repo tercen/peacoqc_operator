@@ -55,6 +55,10 @@ peacoqc_flowQC <- function(flowframe, input.pars){
 
 ctx <- tercenCtx()
 
+if(ctx$cnames[1] != "Time")stop("Time is not in the top column.")
+celldf <- ctx %>% dplyr::select(.ri, .ci) 
+if(nrow(celldf) != length(table(celldf)))stop("There are multiple values in one of the cells.")
+
 input.pars <- list(
   MAD = ifelse(is.null(ctx$op.value('MAD')), 6, as.double(ctx$op.value('MAD'))),
   IT_limit = ifelse(is.null(ctx$op.value('IT_limit')),  0.55, as.double(ctx$op.value('IT_limit'))),

@@ -56,12 +56,15 @@ peacoqc_flowQC <- function(flowframe, input.pars){
 ctx <- tercenCtx(workflowId = "6de71104ef4450d21f34d141e807abee",
                  stepId = "53ed62c5-28d5-44d2-a167-165f5417fe27")
 
+if(ctx$cnames[1] != "Time")stop("Time is not in the top column.")
+celldf <- ctx %>% dplyr::select(.ri, .ci) 
+if(nrow(celldf) != length(table(celldf)))stop("There are multiple values in one of the cells.")
+
 input.pars <- list(
   MAD = ifelse(is.null(ctx$op.value('MAD')), 6, as.double(ctx$op.value('MAD'))),
   IT_limit = ifelse(is.null(ctx$op.value('IT_limit')),  0.55, as.double(ctx$op.value('IT_limit'))),
   remove_zeros = ifelse((ctx$op.value('remove_zeros') == "false"), FALSE, TRUE)
 )
-
 
 data <- ctx$as.matrix() %>% t() %>% cbind((ctx$cselect(ctx$cnames[[1]]))) %>% 
   as.matrix() %>% matrix2flowFrame()
@@ -70,5 +73,3 @@ qc_df <- data.frame(matrix(ncol=0, nrow=nrow(data)))
 qc_df$QC_flag <- ifelse(peacoqc_flowQC(data, input.pars) == TRUE, "pass", "fail")
 peacoqc_QC <- cbind(qc_df, .ci = (0:(nrow(qc_df)-1)))
 ctx$addNamespace(peacoqc_QC) %>% ctx$save()
-
-
