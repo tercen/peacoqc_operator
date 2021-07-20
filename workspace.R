@@ -1,5 +1,5 @@
 library(tercen)
-library(dplyr, warn.conflicts = FALSE)
+library(dplyr, warn.conflicts = FALSE, quietly = TRUE)
 library(tibble)
 library(flowCore)
 library(magrittr)
@@ -53,23 +53,44 @@ peacoqc_flowQC <- function(flowframe, input.pars){
   return(QC$GoodCells)
 }
 
-ctx <- tercenCtx(workflowId = "6de71104ef4450d21f34d141e807abee",
-                 stepId = "53ed62c5-28d5-44d2-a167-165f5417fe27")
+ctx <- tercenCtx(workflowId = "36321b1d18264d80a1106708ce034a11",
+                 stepId = "7ef58e5a-0a5c-425c-bf1c-74b0ec9ae3c4")
 
-if(ctx$cnames[1] != "Time")stop("Time is not in the top column.")
+
+if(ctx$cnames[1] == "filename") {filename <- TRUE
+  if(ctx$cnames[2] != "Time") stop("Time not detected in the second column.")
+}else{filename <- FALSE
+    if(ctx$cnames[1] != "Time") stop("filename or Time not detected in the top column.")
+}
+
 celldf <- ctx %>% dplyr::select(.ri, .ci) 
 if(nrow(celldf) != length(table(celldf)))stop("There are multiple values in one of the cells.")
 
 input.pars <- list(
-  MAD = ifelse(is.null(ctx$op.value('MAD')), 6, as.double(ctx$op.value('MAD'))),
-  IT_limit = ifelse(is.null(ctx$op.value('IT_limit')),  0.55, as.double(ctx$op.value('IT_limit'))),
-  remove_zeros = ifelse((ctx$op.value('remove_zeros') == "false"), FALSE, TRUE)
+  #MAD = ifelse(is.null(ctx$op.value('MAD')), 6, as.double(ctx$op.value('MAD'))),
+  #IT_limit = ifelse(is.null(ctx$op.value('IT_limit')),  0.55, as.double(ctx$op.value('IT_limit'))),
+  #remove_zeros = ifelse((ctx$op.value('remove_zeros') == "false"), FALSE, TRUE)
+  MAD = 6,
+  IT_limit = 0.55,
+  remove_zeros = FALSE
 )
 
-data <- ctx$as.matrix() %>% t() %>% cbind((ctx$cselect(ctx$cnames[[1]]))) %>% 
-  as.matrix() %>% matrix2flowFrame()
-
+if(filename == TRUE){
+  data <- ctx$as.matrix() %>% t() %>% cbind((ctx$cselect(ctx$cnames[[2]]))) %>% cbind((ctx$cselect(ctx$cnames[[1]])))
+}
+if(filename == FALSE){
+  data <- ctx$as.matrix() %>% t() %>% cbind((ctx$cselect(ctx$cnames[[1]])))
+  data$filename <- "singlefile"
+}
+filenames <- unique(data$filename)
 qc_df <- data.frame(matrix(ncol=0, nrow=nrow(data)))
-qc_df$QC_flag <- ifelse(peacoqc_flowQC(data, input.pars) == TRUE, "pass", "fail")
+QC_allfiles <- lapply(filenames, function(x) {
+  singlefiledata <- data[data$filename == x,]
+  singlefileflowframe <- singlefiledata[1:(ncol(singlefiledata)-1)] %>% as.matrix() %>% matrix2flowFrame()
+  singlefileQC_vector <- peacoqc_flowQC(singlefileflowframe, input.pars)
+  rbind(qc_df$test, singlefileQC_vector)
+})
+
+qc_df$QC_flag <- ifelse(do.call(c, QC_allfiles) == TRUE, "pass", "fail")
 peacoqc_QC <- cbind(qc_df, .ci = (0:(nrow(qc_df)-1)))
 ctx$addNamespace(peacoqc_QC) %>% ctx$save()
