@@ -3,7 +3,7 @@
   "description": "peacoQC operator for quality control of flowcytometry data",
   "tags": ["flowcytometry", "Massspectrometry", "QC"],
   "authors": ["tercen"],
-  "urls": ["https://github.com/BvHeeswijk/peacoqc_operator"],
+  "urls": ["https://github.com/tercen/peacoqc_operator"],
   "properties": [
    {
     "kind": "DoubleProperty",
