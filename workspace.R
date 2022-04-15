@@ -33,46 +33,41 @@ matrix2flowFrame <- function(a_matrix){
 
 peacoqc_flowQC <- function(flowframe, input.pars){
   QC <- try(PeacoQC(flowframe,
-        channels = seq(length(colnames(flowframe))-1),
-        determine_good_cells  = "all",
-        plot = FALSE,
-        save_fcs = FALSE,
-        output_directory = NULL,
-        #name_directory = ,
-        report = FALSE,
-        #events_per_bin = FindEventsPerBin(remove_zeros, ff, channels,min_cells, max_bins, step),
-        min_cells = 150,
-        max_bins = 500,
-        step = 500,
-        MAD = input.pars$MAD,
-        IT_limit = input.pars$IT_limit,
-        consecutive_bins = 5,
-        remove_zeros = input.pars$remove_zeros,
-        #suffix_fcs = "_QC",
-        force_IT = 150), silent = TRUE)
+                    channels = seq(length(colnames(flowframe))-1),
+                    determine_good_cells  = "all",
+                    plot = FALSE,
+                    save_fcs = FALSE,
+                    output_directory = NULL,
+                    #name_directory = ,
+                    report = FALSE,
+                    #events_per_bin = FindEventsPerBin(remove_zeros, ff, channels,min_cells, max_bins, step),
+                    min_cells = 150,
+                    max_bins = 500,
+                    step = 500,
+                    MAD = input.pars$MAD,
+                    IT_limit = input.pars$IT_limit,
+                    consecutive_bins = 5,
+                    remove_zeros = input.pars$remove_zeros,
+                    #suffix_fcs = "_QC",
+                    force_IT = 150), silent = TRUE)
   return(QC$GoodCells)
 }
 
-ctx <- tercenCtx(workflowId = "36321b1d18264d80a1106708ce034a11",
-                 stepId = "7ef58e5a-0a5c-425c-bf1c-74b0ec9ae3c4")
-
+ctx <- tercenCtx()
 
 if(ctx$cnames[1] == "filename") {filename <- TRUE
-  if(ctx$cnames[2] != "Time") stop("Time not detected in the second column.")
+if(ctx$cnames[2] != "Time") stop("Time not detected in the second column.")
 }else{filename <- FALSE
-    if(ctx$cnames[1] != "Time") stop("filename or Time not detected in the top column.")
+if(ctx$cnames[1] != "Time") stop("filename or Time not detected in the top column.")
 }
 
 celldf <- ctx %>% dplyr::select(.ri, .ci) 
 if(nrow(celldf) != length(table(celldf)))stop("There are multiple values in one of the cells.")
 
 input.pars <- list(
-  #MAD = ifelse(is.null(ctx$op.value('MAD')), 6, as.double(ctx$op.value('MAD'))),
-  #IT_limit = ifelse(is.null(ctx$op.value('IT_limit')),  0.55, as.double(ctx$op.value('IT_limit'))),
-  #remove_zeros = ifelse((ctx$op.value('remove_zeros') == "false"), FALSE, TRUE)
-  MAD = 6,
-  IT_limit = 0.55,
-  remove_zeros = FALSE
+  MAD = ifelse(is.null(ctx$op.value('MAD')), 6, as.double(ctx$op.value('MAD'))),
+  IT_limit = ifelse(is.null(ctx$op.value('IT_limit')),  0.55, as.double(ctx$op.value('IT_limit'))),
+  remove_zeros = ifelse((ctx$op.value('remove_zeros') == "false"), FALSE, TRUE)
 )
 
 if(filename == TRUE){

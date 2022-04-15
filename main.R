@@ -56,9 +56,9 @@ peacoqc_flowQC <- function(flowframe, input.pars){
 ctx <- tercenCtx()
 
 if(ctx$cnames[1] == "filename") {filename <- TRUE
-  if(ctx$cnames[2] != "Time") stop("Time not detected in the second column.")
+if(ctx$cnames[2] != "Time") stop("Time not detected in the second column.")
 }else{filename <- FALSE
-    if(ctx$cnames[1] != "Time") stop("filename or Time not detected in the top column.")
+if(ctx$cnames[1] != "Time") stop("filename or Time not detected in the top column.")
 }
 
 celldf <- ctx %>% dplyr::select(.ri, .ci) 
