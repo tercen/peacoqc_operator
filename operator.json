@@ -1,7 +1,7 @@
 {
-  "name": "peacoQc_operator",
-  "description": "peacoQC operator for quality control of flowcytometry data",
-  "tags": ["flowcytometry", "Massspectrometry", "QC"],
+  "name": "PeacoQC",
+  "description": "Perform quality control of flowcytometry data using PeacoQC.",
+  "tags": ["flow cytometry", "QC"],
   "authors": ["tercen"],
   "urls": ["https://github.com/tercen/peacoqc_operator"],
   "properties": [

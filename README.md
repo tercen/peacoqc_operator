@@ -1,6 +1,6 @@
-# PeacoQC flow cytometry QC operator
+# PeacoQC operator
 
-#### Description
+##### Description
 
 `peacoqc` operator performs quality control on flow cytometry data.
 
@@ -24,14 +24,15 @@ Input parameters|.
 `remove_zeros`     | Default is FALSE. If TRUE, the zero values will be removed before the peak detection step. They will not be indicated as ’bad’ value. Recommended when cleaning mass cytometry data
 
 ##### Details
-The peacoQC operator will determine peaks on the channels in the flow cytometry data. 
+
+The `peacoQC` operator will determine peaks on the channels in the flow cytometry data. 
 Then it will flagg anomalies caused by e.g. clogs, changes in speed etc. by using an IsolationTree and the MAD method (median absolute deviation). The parameters can be changed to make the quality checks more or less strict.
 The operator returns a quality flagg `pass` or `fail`. 
 
 
-#### Reference
+##### Reference
 
-[PeacoQC R package]((http://www.bioconductor.org/packages/release/bioc/html/PeacoQC.html))
+The operator is a wrapper of the `peacoQC` function from the [PeacoQC R package](https://www.bioconductor.org/packages/release/bioc/html/PeacoQC.html).
 
 ##### See Also
 
