@@ -1,25 +1,13 @@
 {
   "kind": "OperatorUnitTest",
   "name": "peacoQC",
-  "namespace": "ds0",
-  "propertyValues": [
-    {
-    "kind": "PropertyValue",
-    "name": "nCellCutoff",
-    "value": "10"
-    },
-    {
-    "kind": "PropertyValue",
-    "name": "bypass",
-    "value": "true"
-  }
-  ], 
-  "inputDataUri": "exemple_FCS_long.csv",
+  "namespace": "ds4", 
+  "inputDataUri": "c03_simple_fcs.tsv",
   "outputDataUri": ["table1.csv","table2.csv"],
-  "columns": ["TIME"],
-  "rows": ["CHANNEL"],
+  "columns": ["Time"],
+  "rows": ["Variable"],
   "colors": [],
   "labels": [],
-  "yAxis": "Value",
+  "yAxis": "Measurement",
   "xAxis": ""
 }
