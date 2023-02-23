@@ -34,9 +34,10 @@ matrix2flowFrame <- function(a_matrix){
 }
 
 peacoqc_flowQC <- function(flowframe, input.pars) {
+  cn <- colnames(flowframe)[!colnames(flowframe) %in% c("Time", "filename", ".ci")]
   QC <- PeacoQC(
     flowframe,
-    channels = seq(length(colnames(flowframe))-1),
+    channels = cn,
     determine_good_cells  = "all",
     plot = FALSE,
     save_fcs = FALSE,
@@ -56,17 +57,9 @@ peacoqc_flowQC <- function(flowframe, input.pars) {
 
 ctx <- tercenCtx()
 
-if(ctx$cnames[1] == "filename") {
-  filename <- TRUE
-  if(ctx$cnames[2] != "Time") {
-    stop("Time not detected in the second column.")
-  }
-} else {
-  filename <- FALSE
-  if(ctx$cnames[1] != "Time") {
-    stop("filename or Time not detected in the top column.")
-  } 
-}
+has_filename <- grepl("filename", unlist(ctx$cnames))
+has_time <- grepl("Time", unlist(ctx$cnames))
+if(!has_time) stop("Time not detected in the second column.")
 
 input.pars <- list(
   MAD = ctx$op.value('MAD', as.double, 6),
@@ -74,11 +67,16 @@ input.pars <- list(
   remove_zeros = ctx$op.value('remove_zeros', as.logical, FALSE)
 )
 
+col_data <- ctx$cselect() %>%
+  mutate(.ci = 1:nrow(.) - 1L)
+
 data <- ctx$as.matrix() %>% 
   t() %>% 
-  cbind(ctx$cselect())
+  cbind(col_data) %>%
+  rename(Time = contains("Time"),
+         filename = contains("filename"))
 
-if(filename == FALSE){
+if(!has_filename){
   data$filename <- "singlefile"
 }
 
@@ -86,12 +84,11 @@ df <- data.table::as.data.table(data)
 df2 <- df[,{
   ff <- matrix2flowFrame(as.matrix(.SD))
   QC_vector <- peacoqc_flowQC(ff, input.pars)
-  .(QC=QC_vector)
+  .(QC = QC_vector, .ci = .ci)
 }, by = filename]
 
 df2 %>% as_tibble() %>% 
   mutate(QC_flag = if_else(QC, "pass", "fail")) %>%
-  mutate(.ci = 1:nrow(.) - 1L) %>%
   select(QC_flag, .ci) %>%
   ctx$addNamespace() %>%
   ctx$save()
