@@ -57,8 +57,8 @@ peacoqc_flowQC <- function(flowframe, input.pars) {
 
 ctx <- tercenCtx()
 
-has_filename <- grepl("filename", unlist(ctx$cnames))
-has_time <- grepl("Time", unlist(ctx$cnames))
+has_filename <- any(grepl("filename", unlist(ctx$cnames)))
+has_time <- any(grepl("Time", unlist(ctx$cnames)))
 if(!has_time) stop("Time not detected in the second column.")
 
 input.pars <- list(
