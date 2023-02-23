@@ -87,12 +87,13 @@ assign("actual", 0, envir = .GlobalEnv)
 
 df2 <- df[,{
   ff <- matrix2flowFrame(as.matrix(.SD))
+  actual = get("actual",  envir = .GlobalEnv) + 1
   ctx$progress(
     message = paste0("Processing file: ", filename),
     actual = actual,
     total = nfiles
   )
-  actual = get("actual",  envir = .GlobalEnv) + 1
+  assign("actual", actual, envir = .GlobalEnv)
   QC_vector <- suppressMessages(peacoqc_flowQC(ff, input.pars))
   .(QC = QC_vector, .ci = .ci)
 }, by = filename]
