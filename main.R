@@ -68,6 +68,7 @@ input.pars <- list(
 )
 
 col_data <- ctx$cselect() %>%
+  select(matches("filename|Time")) %>%
   mutate(.ci = 1:nrow(.) - 1L)
 
 data <- ctx$as.matrix() %>% 
