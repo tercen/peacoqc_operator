@@ -82,9 +82,18 @@ if(!has_filename){
 }
 
 df <- data.table::as.data.table(data)
+nfiles <- length(unique(df$filename))
+assign("actual", 0, envir = .GlobalEnv)
+
 df2 <- df[,{
   ff <- matrix2flowFrame(as.matrix(.SD))
-  QC_vector <- peacoqc_flowQC(ff, input.pars)
+  ctx$progress(
+    message = paste0("Processing file: ", filename),
+    actual = actual,
+    total = nfiles
+  )
+  actual = get("actual",  envir = .GlobalEnv) + 1
+  QC_vector <- suppressMessages(peacoqc_flowQC(ff, input.pars))
   .(QC = QC_vector, .ci = .ci)
 }, by = filename]
 
