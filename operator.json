@@ -1,29 +1,34 @@
 {
   "name": "PeacoQC",
   "description": "Perform quality control of flowcytometry data using PeacoQC.",
-  "tags": ["flow cytometry", "QC"],
-  "authors": ["tercen"],
-  "urls": ["https://github.com/tercen/peacoqc_operator"],
+  "tags": [
+    "flow cytometry",
+    "QC"
+  ],
+  "authors": [
+    "tercen"
+  ],
+  "urls": [
+    "https://github.com/tercen/peacoqc_operator"
+  ],
   "properties": [
-   {
-    "kind": "DoubleProperty",
-    "name": "MAD",
-    "defaultValue": 6,
-    "description": "The MAD parameter. Default is 6. If this is increased, the algorithm becomes less strict"
-   },
-   {
-    "kind": "DoubleProperty",
-    "name": "IT_limit",
-    "defaultValue": 0.55,
-    "description": "The IsolationTree parameter. Default is 0.55. If this is increased, the algorithm becomes less strict"
-   },
-   {
-    "kind": "BooleanProperty",
-    "name": "remove_zeros",
-    "defaultValue": false,
-    "description": "Default is FALSE. If TRUE, the zero values will be removed before the peak detection step. They will not be indicated as ’bad’ value. Recommended when cleaning mass cytometry data"
-   }
+    {
+      "kind": "DoubleProperty",
+      "name": "MAD",
+      "defaultValue": 6,
+      "description": "The MAD parameter. Default is 6. If this is increased, the algorithm becomes less strict"
+    },
+    {
+      "kind": "DoubleProperty",
+      "name": "IT_limit",
+      "defaultValue": 0.55,
+      "description": "The IsolationTree parameter. Default is 0.55. If this is increased, the algorithm becomes less strict"
+    },
+    {
+      "kind": "BooleanProperty",
+      "name": "remove_zeros",
+      "defaultValue": false,
+      "description": "Default is FALSE. If TRUE, the zero values will be removed before the peak detection step. They will not be indicated as ’bad’ value. Recommended when cleaning mass cytometry data"
+    }
   ]
 }
-
-
