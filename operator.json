@@ -1,6 +1,6 @@
 {
   "name": "PeacoQC",
-  "description": "Perform quality control of flowcytometry data using PeacoQC.",
+  "description": "Performs quality control of flow cytometry data.",
   "tags": [
     "flow cytometry",
     "QC"
